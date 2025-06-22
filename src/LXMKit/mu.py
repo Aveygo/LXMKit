@@ -1,28 +1,30 @@
-FOREGROUND_RED = 'Ff00'        # Red
-FOREGROUND_ORANGE = 'Ffa5'     # Orange
-FOREGROUND_YELLOW = 'Fff0'     # Yellow
-FOREGROUND_GREEN = 'F0f0'      # Green
-FOREGROUND_BLUE = 'F00f'       # Blue
-FOREGROUND_INDIGO = 'F309'     # Indigo
-FOREGROUND_VIOLET = 'F90f'     # Violet
-FOREGROUND_WHITE = 'Ffff'      # White
-FOREGROUND_DARK_GREY = 'F555'  # Dark Grey
-FOREGROUND_GREY = 'F888'       # Grey
-FOREGROUND_LIGHT_GREY = 'Fbbb' # Light Grey
-FOREGROUND_BLACK = 'F000'      # Black
+FOREGROUND_RED = 'Ff00'            # Red
+FOREGROUND_ORANGE = 'Ffa5'         # Orange
+FOREGROUND_YELLOW = 'Fff0'         # Yellow
+FOREGROUND_GREEN = 'F0f0'          # Green
+FOREGROUND_BLUE = 'F00f'           # Blue
+FOREGROUND_INDIGO = 'F309'         # Indigo
+FOREGROUND_VIOLET = 'F90f'         # Violet
+FOREGROUND_WHITE = 'Ffff'          # White
+FOREGROUND_DARK_GREY = 'F555'      # Dark Grey
+FOREGROUND_DARKER_GREY = 'F222'    # Darker Grey
+FOREGROUND_GREY = 'F888'           # Grey
+FOREGROUND_LIGHT_GREY = 'Fbbb'     # Light Grey
+FOREGROUND_BLACK = 'F000'          # Black
 
-BACKGROUND_RED = 'Bf00'        # Red
-BACKGROUND_ORANGE = 'Bfa5'     # Orange
-BACKGROUND_YELLOW = 'Bff0'     # Yellow
-BACKGROUND_GREEN = 'B0f0'      # Green
-BACKGROUND_BLUE = 'B00f'       # Blue
-BACKGROUND_INDIGO = 'B309'     # Indigo
-BACKGROUND_VIOLET = 'B90f'     # Violet
-BACKGROUND_WHITE = 'Bfff'      # White
-BACKGROUND_DARK_GREY = 'B555'  # Dark Grey
-BACKGROUND_GREY = 'B888'       # Grey
-BACKGROUND_LIGHT_GREY = 'Bbbb' # Light Grey
-BACKGROUND_BLACK = 'B000'      # Black
+BACKGROUND_RED = 'Bf00'            # Red
+BACKGROUND_ORANGE = 'Bfa5'         # Orange
+BACKGROUND_YELLOW = 'Bff0'         # Yellow
+BACKGROUND_GREEN = 'B0f0'          # Green
+BACKGROUND_BLUE = 'B00f'           # Blue
+BACKGROUND_INDIGO = 'B309'         # Indigo
+BACKGROUND_VIOLET = 'B90f'         # Violet
+BACKGROUND_WHITE = 'Bfff'          # White
+BACKGROUND_DARK_GREY = 'B555'      # Dark Grey
+BACKGROUND_DARKER_GREY = 'B333'    # Darker Grey
+BACKGROUND_GREY = 'B888'           # Grey
+BACKGROUND_LIGHT_GREY = 'Bbbb'     # Light Grey
+BACKGROUND_BLACK = 'B000'          # Black
 
 CENTER = 'c'
 LEFT = 'l'
@@ -68,7 +70,7 @@ class Micron(Element):
         return '\n'.join(subnode.render(indent) for subnode in self.subnodes)
 
     def build(self):
-        return self.render() + "\n# Made using "
+        return (self.render() + "\n# Made using LXMKit").encode("utf-8")
 
 class Header(Element):
     def __init__(self, content, subnodes=None, style=None):
@@ -205,8 +207,20 @@ class Hr(Element):
         return apply_styles('-' + self.type, self.style, reset=False)
 
 if __name__ == "__main__":
-    canvas = Micron(subnodes=[
-        Paragraph("Example")
+    canvas = Micron([
+        Header(
+            "Login Form Example",
+            [
+                Div([
+                    Br(),
+                    Span([Paragraph("Username: "), Input("name", "Anonymous", 16, style=[BACKGROUND_DARK_GREY])]),
+                    Span([Paragraph("Password: "), Input("pass", "password123", 16, style=[BACKGROUND_DARK_GREY])]),
+                    Br(),
+                    Anchor("   Submit   ", href=None, style=[BACKGROUND_DARK_GREY]),
+                    Br(),
+                ], style=[BACKGROUND_DARKER_GREY, CENTER])
+            ]
+        )
     ])
     
-    print(canvas.build())
+    print(canvas.render())

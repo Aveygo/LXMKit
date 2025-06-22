@@ -2,6 +2,10 @@
 
 A stupid simple toolkit to build & host Nomadnet bots
 
+```bash
+pip install git+https://github.com/Aveygo/LXMKit.git
+```
+
 ```python
 from LXMKit.app import LXMFApp, Message
 from LXMKit.mu import Micron, Paragraph
@@ -14,7 +18,7 @@ app = LXMFApp(app_name="demo")
 def sample(path:str, link:RNS.Link):
     return Micron([
         Paragraph("Hello World!")
-    ])
+    ]).build()
 
 @app.delivery_callback
 def delivery_callback(message: Message):
@@ -24,4 +28,8 @@ def delivery_callback(message: Message):
 if __name__ == "__main__":
     app.run()
 ```
+
+## TODO
+
+ - Better form management (still possible in the path)
 
