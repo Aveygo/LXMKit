@@ -11,16 +11,19 @@ setuptools.setup(
     description = "Create LXM app with ease",
     long_description = long_description,
     long_description_content_type = "text/markdown",
-    url = "",
+    url = "https://github.com/Aveygo/LXMKit",
     project_urls = {
-        "Bug Tracker": "package issues URL",
+        "Bug Tracker": "https://github.com/Aveygo/LXMKit/issues",
     },
     classifiers = [
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir = {"": "src"},
-    packages = setuptools.find_packages(where="src"),
-    python_requires = ">=3.6"
+    package_dir = {"": "LXMKit/src"},
+    packages = setuptools.find_packages(where="LXMKit/src"),
+    python_requires = ">=3.6",
+    install_requires=[
+        'RNS', 'LXMF', 'lmdb'
+    ],
 )

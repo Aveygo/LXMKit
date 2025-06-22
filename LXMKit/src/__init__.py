@@ -1,2 +1,2 @@
-from LXMKit.src.app import LXMFApp
-from LXMKit.src.mu import *
+from .app import LXMFApp
+from .mu import *
