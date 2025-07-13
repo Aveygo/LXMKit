@@ -1,4 +1,4 @@
-import RNS, LXMF, time, os, lmdb
+import RNS, LXMF, time, os, lmdb, inspect
 
 class AnnounceHandler:
     """
@@ -194,7 +194,14 @@ class LXMFApp:
         """
         with self.names.begin() as txn:
             return txn.get(identity_hash)
-
+        
+    def resolve_params(self, data:dict) -> dict:
+        """
+        The default param data provided from lxmf is low-key kinda wack.
+        This function just removes the annoying 'var_' prefix from the keys
+        """
+        return dict([(k[4:], v) for (k, v) in data.items()])
+        
     def _response_wrapper(self, path, data, request_id, link_id, remote_identity, requested_at):
         """
         Wraps request handling to match RNS link with the registered function.
@@ -208,7 +215,31 @@ class LXMFApp:
         
         assert not found_link is None, "RNS is bugging out? I don't know how you got here"
 
-        return self.function_paths[path](path, found_link)
+        # Get the intended function to handle provided path
+        target_func = self.function_paths[path.split("`")[0]]
+        
+        # This is a bit of a hack to make it more easy to write decorators
+        sig = inspect.signature(target_func)
+        params = sig.parameters
+
+        kwargs = {}
+        if 'params' in params:
+            kwargs['params'] = self.resolve_params(data)
+        if 'path' in params:
+            kwargs['path'] = path
+        if 'link' in params or 'found_link' in params:
+            kwargs['link' if 'link' in params else 'found_link'] = found_link
+        if 'data' in params:
+            kwargs['data'] = data
+        if 'request_id' in params:
+            kwargs['request_id'] = request_id
+        if 'remote_identity' in params:
+            kwargs['remote_identity'] = remote_identity
+        if 'requested_at' in params:
+            kwargs['requested_at'] = requested_at
+
+        # Call the target function with the supported arguments
+        return target_func(**kwargs)
 
     def request_handler(self, path):
         """
@@ -269,4 +300,12 @@ class LXMFApp:
             time.sleep(self.announce)
 
 if __name__ == "__main__":
-    LXMFApp("test").run()
+    app = LXMFApp("test")
+
+    @app.request_handler("/page/index.mu")
+    def sample(path:str, link:RNS.Link, params:dict):
+        print(path)
+        print(params)
+        return "Hello World!".encode("utf-8")
+
+    app.run()
