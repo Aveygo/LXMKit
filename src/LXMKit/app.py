@@ -200,6 +200,9 @@ class LXMFApp:
         The default param data provided from lxmf is low-key kinda wack.
         This function just removes the annoying 'var_' prefix from the keys
         """
+        if data is None:
+            return {}
+        
         return dict([(k[4:], v) for (k, v) in data.items()])
         
     def _response_wrapper(self, path, data, request_id, link_id, remote_identity, requested_at):
